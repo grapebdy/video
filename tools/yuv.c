@@ -9,15 +9,33 @@
 
 #include "lib.h"
 
-#define DST_FILE_NAME "ducks_take_off_yv16_720p50_1frame.yuv"
-#define SRC_FILE_NAME "ducks_take_off_422_720p50.y4m"
-#define TST_FILE_NAME "test.yuv"
+#define DST_FILE_NAME "/mnt/hgfs/workspace/ducks_take_off_yv16_720p50_1frame.yuv"
+#define SRC_FILE_NAME "/mnt/hgfs/workspace/ducks_take_off_422_720p50.y4m"
+#define TST_FILE_NAME "/mnt/hgfs/workspace/test.yuv"
 #define FILE_SIZE (1280 * 720 * 2)
 
 #define UYVY_BLACK/*Y Cr Y Cb*/	0x10801080
 #define UYVY_BLUE/*Y Cr Y Cb*/	0x286e28ef
 #define UYVY_RED/*Y Cr Y Cb*/	0x51ef515b
 #define UYVY_GREEN/*Y Cr Y Cb*/	0x90239036
+
+int grap_yuv_picture(unsigned char *pic_src, unsigned char *pic_dst,
+		int src_rows, int src_column, int dst_rows, int dst_column)
+{
+	int i, j;
+	int stride = (src_column - dst_column) * 2;
+	int src_index = 0;
+	int dst_index = 0;
+
+	for (i = 0; i < dst_rows; i++) {
+		for (j = 0; j < 2 * dst_column; j++)
+			pic_dst[dst_index++] = pic_src[src_index++];
+		src_index += stride;
+	}
+	return dst_index;
+
+}
+
 void generate_data1(unsigned char *data, int column, int row)
 {
 	int i;
@@ -25,6 +43,7 @@ void generate_data1(unsigned char *data, int column, int row)
 	for (i = 0; i < (column * row * 2) / 4; i++)
 		buff[i] = UYVY_GREEN;
 }
+
 void generate_data(unsigned char *data, int column, int row, int y, int cb, int cr)
 {
 	int i, j;
@@ -35,6 +54,7 @@ void generate_data(unsigned char *data, int column, int row, int y, int cb, int 
 		data[i + 3] = y;
 	}
 }
+
 void generate_plannar_data(unsigned char *data, int column, int row, int y, int cb, int cr)
 {
 	int i, j;
@@ -47,6 +67,7 @@ void generate_plannar_data(unsigned char *data, int column, int row, int y, int 
 		data[i + 1] = cr;
 	}
 }
+
 int data_dump(unsigned char *data, int size)
 {
         int i;
@@ -94,12 +115,21 @@ void rgb2ycbcr(unsigned char r,unsigned char g,unsigned char b)
 unsigned char ybuff[FILE_SIZE];
 unsigned char ubuff[FILE_SIZE];
 unsigned char vbuff[FILE_SIZE];
+unsigned char pic_src[FILE_SIZE];
+unsigned char pic_dst[FILE_SIZE];
+
 int main(int argc, char *argv[])
 {
+	int byte;
 	int opt, y, u, v, r, g, b;
         unsigned char data[FILE_SIZE];
-	while ((opt = getopt(argc,argv,"fsckty:u:v:r:g:b:")) != -1) {
+	while ((opt = getopt(argc,argv,"fscktey:u:v:r:g:b:")) != -1) {
 		switch (opt) {
+		case 'e':
+			read_file(DST_FILE_NAME, pic_src, 0, FILE_SIZE);
+			byte = grap_yuv_picture(pic_src, pic_dst, 720, 1280, 480, 720);
+			save_file(TST_FILE_NAME, pic_dst, 0, byte);
+			break;
 		case 't':
 			read_file(DST_FILE_NAME, data, 0, FILE_SIZE);
 			get_yv16_data(data, ybuff, ubuff, vbuff, 1280, 720);
