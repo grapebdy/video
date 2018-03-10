@@ -45,26 +45,3 @@ int save_file(char* filename, void *buff, int offset, int size)
 	close(fd);
 	return wt_num;
 }
-
-
-#if 0
-void dump_data(unsigned char *data, int length)
-{
-	int i;
-	for (i = 0; i < length; i++)
-		printf("%x%c", data[i], i % 16 == 15?'\n':' ');
-
-	printf("\n");
-}
-#define VIDEO_SIZE	(640 * 480 * 2)
-int main()
-{
-	unsigned char data[VIDEO_SIZE];
-	
-	
-	generate_data(data, 640, 480, 244, 127, 127);
-	dump_data(data, 96);
-	save_file("/tmp/xxx.yuv", data, 0, VIDEO_SIZE);
-	return 0;
-}
-#endif
