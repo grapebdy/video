@@ -21,7 +21,7 @@ int read_file(char* filename, void *buff, int offset, int size)
 	int rd_num = -1;
 	fd = open(filename, O_RDONLY);
 	if (fd == -1) {
-		printf("open file error\n");
+		printf("open %s error\n", filename);
 		return -1;
 	}
 	lseek(fd, offset, SEEK_SET);
@@ -37,7 +37,7 @@ int save_file(char* filename, void *buff, int offset, int size)
 	int wt_num = -1;
 	fd = open(filename, O_RDWR|O_CREAT|O_TRUNC|O_SYNC, S_IRWXU);
 	if (fd == -1) {
-		printf("open file error\n");
+		printf("open %s error\n", filename);
 		return -1;
 	}
 	lseek(fd, offset, SEEK_SET);

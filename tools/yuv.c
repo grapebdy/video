@@ -9,9 +9,9 @@
 
 #include "lib.h"
 
-#define DST_FILE_NAME "/mnt/hgfs/workspace/ducks_take_off_yv16_720p50_1frame.yuv"
-#define SRC_FILE_NAME "/mnt/hgfs/workspace/ducks_take_off_422_720p50.y4m"
-#define TST_FILE_NAME "/mnt/hgfs/workspace/test.yuv"
+#define DST_FILE_NAME "ducks_take_off_yv16_720p50_1frame.yuv"
+#define SRC_FILE_NAME "ducks_take_off_422_720p50.y4m"
+#define TST_FILE_NAME "test.yuv"
 #define FILE_SIZE (1280 * 720 * 2)
 
 #define UYVY_BLACK/*Y Cr Y Cb*/	0x10801080
@@ -19,22 +19,6 @@
 #define UYVY_RED/*Y Cr Y Cb*/	0x51ef515b
 #define UYVY_GREEN/*Y Cr Y Cb*/	0x90239036
 
-int grap_yuv_picture(unsigned char *pic_src, unsigned char *pic_dst,
-		int src_rows, int src_column, int dst_rows, int dst_column)
-{
-	int i, j;
-	int stride = (src_column - dst_column) * 2;
-	int src_index = 0;
-	int dst_index = 0;
-
-	for (i = 0; i < dst_rows; i++) {
-		for (j = 0; j < 2 * dst_column; j++)
-			pic_dst[dst_index++] = pic_src[src_index++];
-		src_index += stride;
-	}
-	return dst_index;
-
-}
 
 void generate_data1(unsigned char *data, int column, int row)
 {

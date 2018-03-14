@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 int generate_random(unsigned char *src, int length);
 void show_msg(unsigned char *src, int length);
