@@ -130,14 +130,14 @@ int main(int argc, char *argv[])
 		printf("read %s failed\n", file_src);
 		goto pic_out;
 	}
-#if 0
+
 	ret = grap_raw_picture(pic_src, pic_dst, bytes_per_pixel,
 			src_rows, src_column, dst_rows, dst_column);
 	if (ret < 0) {
 		printf("grap picture failed, check src len >= dst len\n");
 		goto pic_out;
 	}
-#endif
+
 	ret = save_file(file_dst, pic_dst, 0, ret);
 	if (ret < 0) {
 		printf("write %s failed\n", file_src);
