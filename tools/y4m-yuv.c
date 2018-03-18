@@ -41,7 +41,7 @@ int convert_yv16_uyvy(unsigned char *dst, unsigned char *ybuf,
 
 void do_usage(void)
 {
-	printf("grapic: \n");
+	printf("y4m2yuv: \n");
 	printf("\t -b num \t bytes per pixel\n");
 	printf("\t -s file\t source file, length < 100\n");
 	printf("\t -o file\t destination file, length < 100\n");
@@ -159,6 +159,7 @@ int main(int argc, char *argv[])
 	ret = read_file(file_src, pic_src, 46 , bytes_per_frame);
 	if (ret < 0) {
 		printf("read %s failed\n", file_src);
+		ret = -1;
 		goto pic_out;
 	}
 
@@ -167,6 +168,7 @@ int main(int argc, char *argv[])
 
 	ret = save_file(file_dst, pic_dst, 0, bytes_per_frame);
 	if (ret < 0) {
+		ret = -1;
 		printf("write %s failed\n", file_src);
 	}
 
