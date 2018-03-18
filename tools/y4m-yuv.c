@@ -141,8 +141,8 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	printf("convert frame%d from %s(%dx%d) to %s\n", frame, file_src,
-			src_column, src_rows, file_dst);
+	printf("convert frame %d from %s(%dx%d, %dB) to %s\n", frame, file_src,
+			src_column, src_rows, get_file_size(file_src), file_dst);
 
 	bytes_per_frame = src_column * src_rows * bytes_per_pixel;
 	pic_src = malloc(bytes_per_frame);

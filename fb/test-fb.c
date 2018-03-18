@@ -98,7 +98,7 @@ int main()
 	unsigned char *fb_base;
 	struct fb_var_screeninfo vinfo;
 	struct fb_fix_screeninfo finfo;
-	
+
 	fbfd = open(GPT_FB_DEV, O_RDWR);
 	if (fbfd < 0) {
 		printf("/dev/fb0 is not exist\n");
@@ -120,7 +120,7 @@ int main()
 	fb_base = (void *)mmap(0, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
 	if ((int )fb_base == -1) {
 		printf("map failed\n");
-		close(fbfd);	
+		close(fbfd);
 		return -1;
 	}
 
