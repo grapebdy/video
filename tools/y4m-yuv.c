@@ -10,6 +10,29 @@
 
 #include "lib.h"
 
+#define Y4M_HEAD_SIZE	0x28
+#define Y4M_FRAME_SIZE	0x06
+struct y4m_struct {
+	int width;
+	int higth;
+	int frame;
+	int inter;
+	int colorsp;
+};
+
+int get_frame_header(char *filename, struct y4m_struct *y4m)
+{
+	int ret;
+	char head[100];
+	ret = read_file(filename, head, 0 , 46);
+	if (ret < 0) {
+		printf("read %s failed\n", filename);
+		return -1;
+	}
+
+	return 0;
+}
+
 int split_yuv_frame(unsigned char *src, unsigned char *ybuf,
 		unsigned char *ubuf, unsigned char *vbuf, int column, int row)
 {
@@ -118,7 +141,7 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	printf("convert frame%d from %s(%dx%d) to %s\n", 1, file_src,
+	printf("convert frame%d from %s(%dx%d) to %s\n", frame, file_src,
 			src_column, src_rows, file_dst);
 
 	bytes_per_frame = src_column * src_rows * bytes_per_pixel;
@@ -156,7 +179,9 @@ int main(int argc, char *argv[])
 		goto pic_out;
 	}
 
-	ret = read_file(file_src, pic_src, 46 , bytes_per_frame);
+	ret = read_file(file_src, pic_src,
+		Y4M_HEAD_SIZE + frame * (bytes_per_frame + Y4M_FRAME_SIZE) + Y4M_FRAME_SIZE,
+		bytes_per_frame);
 	if (ret < 0) {
 		printf("read %s failed\n", file_src);
 		ret = -1;
