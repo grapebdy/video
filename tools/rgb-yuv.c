@@ -58,7 +58,7 @@ void rgb2yuv_709(struct pixel *p)
 	p->y  = 0.2126  * rc + 0.7154 * gc + 0.072 * bc;
 	p->cb = -0.1145 * rc - 0.3855 * gc + 0.5 * bc + 128;
 	p->cr = 0.5     * rc - 0.4543 * gc - 0.045 * bc + 128;
-	
+
 	if (p->y < 0)
 		p->y = 0;
 	if (p->cb < 0)
@@ -87,7 +87,7 @@ void rgb2yuv_2020(struct pixel *p)
 	p->y  = 0.2627 * rc + 0.678 * gc + 0.0593 * bc;
 	p->cb = 0.5315 * (bc - p->y) + 128;
 	p->cr = 0.6781 * (rc - p->y) + 128;
-	
+
 	if (p->y < 0)
 		p->y = 0;
 	if (p->cb < 0)
@@ -99,3 +99,7 @@ void rgb2yuv_2020(struct pixel *p)
 	p->cr &= 0xff;
 }
 
+int main(void)
+{
+
+}

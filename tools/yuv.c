@@ -61,6 +61,29 @@ int data_dump(unsigned char *data, int size)
         printf("\n");
 }
 
+int grap_raw_picture(unsigned char *pic_src, unsigned char *pic_dst,
+		int bytes_per_pixel, int src_rows, int src_column,
+		int dst_rows, int dst_column)
+{
+	int i, j;
+	int stride = (src_column - dst_column) * bytes_per_pixel;
+	int src_index = 0;
+	int dst_index = 0;
+	if (src_column * src_rows < dst_column * dst_rows)
+		return -1;
+
+
+	for (i = 0; i < dst_rows; i++) {
+		for (j = 0; j < bytes_per_pixel * dst_column; j++)
+			pic_dst[dst_index++] = pic_src[src_index++];
+		src_index += stride;
+	}
+	return dst_index;
+
+}
+
+
+
 int get_yv16_data(unsigned char *src, unsigned char *ybuf,
 		unsigned char *ubuf, unsigned char *vbuf, int column, int row)
 {
@@ -111,7 +134,7 @@ int main(int argc, char *argv[])
 		switch (opt) {
 		case 'e':
 			read_file(DST_FILE_NAME, pic_src, 0, FILE_SIZE);
-			byte = grap_yuv_picture(pic_src, pic_dst, 720, 1280, 480, 720);
+			byte = grap_raw_picture(pic_src, pic_dst, 2, 720, 1280, 480, 720);
 			save_file(TST_FILE_NAME, pic_dst, 0, byte);
 			break;
 		case 't':
