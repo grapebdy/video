@@ -10,7 +10,6 @@
 
 #include "lib.h"
 
-#define Y4M_HEAD_SIZE	0x28
 #define Y4M_FRAME_SIZE	0x06
 struct y4m_struct {
 	int width;
@@ -19,6 +18,27 @@ struct y4m_struct {
 	int inter;
 	int colorsp;
 };
+
+int get_frame_offset(char *filename)
+{
+	int ret;
+	char head[100];
+	int i;
+	ret = read_file(filename, head, 0 , 100);
+	if (ret < 0) {
+		printf("read %s failed\n", filename);
+		return -1;
+	}
+
+	ret = -1;
+	for (i = 0; i < 100; i++) {
+		if (memcmp(head + i, "FRAME", 5) == 0) {
+			ret = i;
+		}
+	}
+	return ret;
+
+}
 
 int get_frame_header(char *filename, struct y4m_struct *y4m)
 {
@@ -91,6 +111,7 @@ int main(int argc, char *argv[])
 	unsigned char *pic_v = NULL;
 	int file_lock = 0;
 	int bytes_per_frame = 0;
+	int header_len = 0;
 
 	while ((opt = getopt(argc,argv,"b:s:o:w:h:f:")) != -1) {
 		switch (opt) {
@@ -144,6 +165,12 @@ int main(int argc, char *argv[])
 	printf("convert frame %d from %s(%dx%d, %dB) to %s\n", frame, file_src,
 			src_column, src_rows, get_file_size(file_src), file_dst);
 
+	header_len = get_frame_offset(file_src);
+	if (header_len < 0) {
+		printf("file format is not supported\n");
+		return -1;
+	}
+
 	bytes_per_frame = src_column * src_rows * bytes_per_pixel;
 	pic_src = malloc(bytes_per_frame);
 	if (!pic_src) {
@@ -180,7 +207,7 @@ int main(int argc, char *argv[])
 	}
 
 	ret = read_file(file_src, pic_src,
-		Y4M_HEAD_SIZE + frame * (bytes_per_frame + Y4M_FRAME_SIZE) + Y4M_FRAME_SIZE,
+		header_len + frame * (bytes_per_frame + Y4M_FRAME_SIZE) + Y4M_FRAME_SIZE,
 		bytes_per_frame);
 	if (ret < 0) {
 		printf("read %s failed\n", file_src);
