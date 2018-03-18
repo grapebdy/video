@@ -15,16 +15,20 @@
 
 int grap_raw_picture(unsigned char *pic_src, unsigned char *pic_dst,
 		int bytes_per_pixel, int src_rows, int src_column,
-		int dst_rows, int dst_column)
+		int dst_x, int dst_y, int dst_rows, int dst_column)
 {
 	int i, j;
 	int stride = (src_column - dst_column) * bytes_per_pixel;
 	int src_index = 0;
 	int dst_index = 0;
+
 	if (src_column * src_rows < dst_column * dst_rows)
 		return -1;
-
-
+	if (dst_rows + dst_y > src_rows)
+		return -1;
+	if (dst_column + dst_x > src_column)
+		return -1;
+	src_index += (dst_x + dst_y * src_column) * 2;
 	for (i = 0; i < dst_rows; i++) {
 		for (j = 0; j < bytes_per_pixel * dst_column; j++)
 			pic_dst[dst_index++] = pic_src[src_index++];
@@ -44,6 +48,8 @@ void do_usage(void)
 	printf("\t -h num\t  higth of src image, default 720\n");
 	printf("\t -x num\t  width of src image, default 720\n");
 	printf("\t -y num\t  higth of src image, default 480\n");
+	printf("\t -m num\t  index of width image, default 0\n");
+	printf("\t -n num\t  index of higth image, default 0\n");
 }
 
 int main(int argc, char *argv[])
@@ -54,6 +60,8 @@ int main(int argc, char *argv[])
 	int src_column = 1280;
 	int dst_rows = 480;
 	int dst_column = 720;
+	int dst_x = 0;
+	int dst_y = 0;
 	int bytes_per_pixel = BYTES_YUV422_PIXEL;
 	char file_src[100];
 	char file_dst[100];
@@ -61,7 +69,7 @@ int main(int argc, char *argv[])
 	unsigned char *pic_dst = NULL;
 	int file_lock = 0;
 
-	while ((opt = getopt(argc,argv,"b:s:o:w:h:x:y:")) != -1) {
+	while ((opt = getopt(argc,argv,"b:s:o:w:h:x:y:m:n:")) != -1) {
 		switch (opt) {
 
 		case 'b':
@@ -95,6 +103,12 @@ int main(int argc, char *argv[])
 			break;
 		case 'y':
 			dst_rows = atoi(optarg);
+			break;
+		case 'm':
+			dst_x = atoi(optarg);
+			break;
+		case 'n':
+			dst_y = atoi(optarg);
 			break;
 		default:
 			printf("option is not supported\n");
@@ -132,7 +146,7 @@ int main(int argc, char *argv[])
 	}
 
 	ret = grap_raw_picture(pic_src, pic_dst, bytes_per_pixel,
-			src_rows, src_column, dst_rows, dst_column);
+			src_rows, src_column, dst_x, dst_y, dst_rows, dst_column);
 	if (ret < 0) {
 		printf("grap picture failed, check src len >= dst len\n");
 		goto pic_out;
