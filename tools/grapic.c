@@ -28,7 +28,7 @@ int grap_raw_picture(unsigned char *pic_src, unsigned char *pic_dst,
 		return -1;
 	if (dst_column + dst_x > src_column)
 		return -1;
-	src_index += (dst_x + dst_y * src_column) * 2;
+	src_index += (dst_x + dst_y * src_column) * bytes_per_pixel;
 	for (i = 0; i < dst_rows; i++) {
 		for (j = 0; j < bytes_per_pixel * dst_column; j++)
 			pic_dst[dst_index++] = pic_src[src_index++];
